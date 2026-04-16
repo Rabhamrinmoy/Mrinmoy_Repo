@@ -8,6 +8,18 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="googlebot" content="noindex, nofollow">
 <style>
+/* PASSWORD GATE */
+.pw-gate{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center}
+.pw-box{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:48px 40px;text-align:center;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.08)}
+.pw-box h2{font-size:20px;margin-bottom:8px;color:var(--text)}
+.pw-box p{font-size:13px;color:var(--text-light);margin-bottom:24px}
+.pw-box input{width:100%;padding:12px 16px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;outline:none;margin-bottom:16px}
+.pw-box input:focus{border-color:var(--primary)}
+.pw-box .pw-btn{width:100%;padding:12px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s}
+.pw-box .pw-btn:hover{background:var(--primary-dark)}
+.pw-error{color:#DC2626;font-size:12px;margin-top:8px;display:none}
+.pw-lock-icon{font-size:40px;margin-bottom:16px}
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--primary:#5F46D0;--primary-dark:#4338CA;--bg:#FAFBFF;--card-bg:#fff;--text:#1F2937;--text-light:#6B7280;--border:#E5E7EB;--accent:#FF6D05}
 body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:var(--text);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased}
@@ -101,6 +113,19 @@ a:hover{color:var(--primary-dark)}
 </head>
 <body>
 
+<!-- Password Gate -->
+<div class="pw-gate" id="pwGate">
+  <div class="pw-box">
+    <div class="pw-lock-icon">&#128274;</div>
+    <h2>Access Restricted</h2>
+    <p>Enter the password to view the portfolio</p>
+    <input type="password" id="pwInput" placeholder="Password" autocomplete="off" autofocus>
+    <button class="pw-btn" onclick="checkPw()">Unlock</button>
+    <div class="pw-error" id="pwError">Incorrect password. Try again.</div>
+  </div>
+</div>
+
+<div id="mainApp" style="display:none">
 <nav class="nav">
   <div class="nav-name">MR</div>
   <div class="nav-links">
@@ -282,6 +307,35 @@ document.getElementById('load-more').addEventListener('click', () => {
 });
 
 renderArticles();
+</script>
+
+</div><!-- /mainApp -->
+
+<script>
+function checkPw() {
+  var input = document.getElementById('pwInput').value;
+  if (input === 'Guwahatiwelcome@123!') {
+    sessionStorage.setItem('portfolio_pw', '1');
+    unlock();
+  } else {
+    document.getElementById('pwError').style.display = 'block';
+    document.getElementById('pwInput').value = '';
+    document.getElementById('pwInput').focus();
+  }
+}
+
+function unlock() {
+  document.getElementById('pwGate').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'block';
+}
+
+document.getElementById('pwInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') checkPw();
+});
+
+if (sessionStorage.getItem('portfolio_pw') === '1') {
+  unlock();
+}
 </script>
 
 </body>
